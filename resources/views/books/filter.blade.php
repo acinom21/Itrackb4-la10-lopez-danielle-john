@@ -7,9 +7,9 @@
     <h2 class="mb-3">Filtered Book List</h2>
 
     <div class="mb-3">
-        @if($activeFilter)
+        @if (!empty($activeFilter))
             <span class="badge bg-primary">Showing: {{ $activeFilter }}</span>
-            <a href="{{ route('books.filter') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear Filter</a>
+            <a href="{{ route('books.index') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear Filter</a>
         @else
             <span class="badge bg-secondary">Showing all books</span>
         @endif
@@ -29,12 +29,12 @@
             @forelse ($books as $book)
                 <tr>
                     <td>
-                        <a href="{{ route('books.show', $book['id']) }}">{{ $book['id'] }}</a>
+                        <a href="{{ route('books.show', $book->id) }}">{{ $book->id }}</a>
                     </td>
-                    <td>{{ $book['title'] }}</td>
-                    <td>{{ $book['author'] }}</td>
-                    <td>{{ $book['year'] }}</td>
-                    <td>{{ $book['genre'] }}</td>
+                    <td>{{ $book->title }}</td>
+                    <td>{{ $book->author }}</td>
+                    <td>{{ $book->year }}</td>
+                    <td>{{ $book->genre->name }}</td>
                 </tr>
             @empty
                 <tr>

@@ -3,50 +3,24 @@
 namespace Database\Seeders;
 
 use App\Models\Book;
+use App\Models\Genre;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
 {
     public function run(): void
     {
-        Book::create([
-            'title' => 'Noli Me Tangere',
-            'author' => 'Jose Rizal',
-            'copies' => 4,
-            'is_available' => true,
-            'isbn' => null,
-        ]);
-        Book::create([
-    'title' => 'El Filibusterismo',
-    'author' => 'Jose Rizal',
-    'copies' => 3,
-    'is_available' => true,
-    'isbn' => '9789710800001',
-]);
+        $classical  = Genre::create(['name' => 'Classical']);
+        $mystery    = Genre::create(['name' => 'Mystery']);
+        $historical = Genre::create(['name' => 'Historical']);
 
-    Book::create([
-        'title' => 'Ibong Adarna',
-        'author' => 'Anonymous',
-        'copies' => 2,
-        'is_available' => false,
-        'isbn' => null,
-    ]);
-
-    Book::create([
-        'title' => 'Florante at Laura',
-        'author' => 'Francisco Balagtas',
-        'copies' => 5,
-        'is_available' => true,
-        'isbn' => null,
-    ]);
-
-    Book::create([
-        'title' => 'Dekada 70',
-        'author' => 'Lualhati Bautista',
-        'copies' => 1,
-        'is_available' => true,
-        'isbn' => '9789710800002',
-    ]);
-        
+        Book::create(['title' => 'MMK', 'author' => 'charo santos', 'year' => 1950, 'genre_id' => $classical->id, 'is_featured' => true, 'description' => null]);
+        Book::create(['title' => 'Spiderman', 'author' => 'Lhorenz', 'year' => 2011, 'genre_id' => $mystery->id, 'is_featured' => false, 'description' => null]);
+        Book::create(['title' => 'The Return of the King', 'author' => 'Khaliq', 'year' => 1954, 'genre_id' => $historical->id, 'is_featured' => true, 'description' => null]);
+        Book::create(['title' => 'World of Warcraft', 'author' => 'Lenard', 'year' => 2000, 'genre_id' => $historical->id, 'is_featured' => false, 'description' => null]);
+        Book::create(['title' => 'The Hobbit', 'author' => 'Justin', 'year' => 1954, 'genre_id' => $classical->id, 'is_featured' => false, 'description' => null]);
+        Book::create(['title' => 'The World of Computers', 'author' => 'Mikko', 'year' => 2010, 'genre_id' => $mystery->id, 'is_featured' => false, 'description' => null]);
+        Book::create(['title' => 'Programmer', 'author' => 'Lhorenz', 'year' => 1978, 'genre_id' => $historical->id, 'is_featured' => false, 'description' => null]);
+        Book::create(['title' => 'magpakailan man', 'author' => 'jessica sojo', 'year' => 2014, 'genre_id' => $classical->id, 'is_featured' => false, 'description' => null]);
     }
 }
