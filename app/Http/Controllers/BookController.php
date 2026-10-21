@@ -3,30 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Book;
 
 class BookController extends Controller
 {
-    private function books()
-    {
-        return [
-            1 => ['id' => 1, 'title' => 'MMK', 'author' => 'charo santos', 'year' => '1950', 'genre' => 'Classical'],
-            2 => ['id' => 2, 'title' => 'Spiderman', 'author' => 'Lhorenz', 'year' => '2011', 'genre' => 'Mystery'],
-            3 => ['id' => 3, 'title' => 'The Return of the King', 'author' => 'Khaliq', 'year' => '1954', 'genre' => 'Historical'],
-            4 => ['id' => 4, 'title' => 'World of Warcraft', 'author' => 'Lenard', 'year' => '2000', 'genre' => 'Historical'],
-            5 => ['id' => 5, 'title' => 'The Hobbit', 'author' => 'Justin', 'year' => '1954', 'genre' => 'Classical'],
-            6 => ['id' => 6, 'title' => 'The World of Computers', 'author' => 'Mikko', 'year' => '2010', 'genre' => 'Mystery'],
-            7 => ['id' => 7, 'title' => 'Programmer', 'author' => 'Lhorenz', 'year' => '1978', 'genre' => 'Historical'],
-        ];
-    }
-
-    // A1/A2/A3/A4/A5/A6: one route, two query-string values, each with a
-    // sensible default (''), applied independently and together.
     public function index(Request $request)
     {
         $genre = $request->query('genre', '');
         $year  = $request->query('year', '');
 
-        $all = collect($this->books());
+        $all = Book::all();
 
         $books = $all
             ->when($genre !== '', fn ($list) => $list->where('genre', $genre))
@@ -37,7 +23,6 @@ class BookController extends Controller
             'books'  => $books,
             'genre'  => $genre,
             'year'   => $year,
-            // for building the filter links in the view (B1)
             'genres' => $all->pluck('genre')->unique()->sort()->values(),
             'years'  => $all->pluck('year')->unique()->sort()->values(),
         ]);
@@ -45,23 +30,28 @@ class BookController extends Controller
 
     public function create()
     {
-        //
+        return view('books.create');
     }
 
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'year' => 'required|numeric|digits:4',
+            'genre' => 'required|in:Classical,Mystery,Historical',
+        ]);
+
+        Book::create($validated + ['is_featured' => false]);
+
+        return redirect()->route('books.index')->with('success', 'Book added successfully.');
     }
 
-    public function show(string $id)
+    public function show($id)
     {
-        $books = $this->books();
+        $book = Book::findOrFail($id);
 
-        if (!isset($books[$id])) {
-            abort(404);
-        }
-
-        return view('books.show', ['book' => $books[$id]]);
+        return view('books.show', ['book' => $book]);
     }
 
     public function edit(string $id)
@@ -81,14 +71,9 @@ class BookController extends Controller
 
     public function feature()
     {
-        $books = $this->books();
-
-        return view('books.feature', ['book' => $books[1]]);
+        return view('books.feature', ['book' => Book::findOrFail(1)]);
     }
 
-    // C2/C3/C4: replaces the old filter() method. Renders nothing itself —
-    // carries the old genre value across and redirects into the new
-    // query-string version of the list.
     public function redirectOldFilter(?string $genre = null)
     {
         return redirect()->route('books.index', $genre ? ['genre' => $genre] : []);
